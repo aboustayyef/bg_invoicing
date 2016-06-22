@@ -26,7 +26,7 @@ var init = function(){
 			if ((itemName.search(new RegExp(searchTerm,"i")) > -1) || (itemDescription.search(new RegExp(searchTerm,"i")) > -1) ) {
 
 				// update counter
-				searchResults.count += 1 ;
+				searchResults.count  += 1 ;
 				
 				// push item to results
 				searchResults.items.push({
@@ -56,9 +56,9 @@ var init = function(){
 		
 		if (bg.searchResults.count > 0) {
 			$.each(bg.searchResults.items, function(i, result){
-				html += '<li>' + result.name + ' - ' + result.description + ' ';
-				html += '<button class="addSearchResultToInvoice" data-code="'+result.code+'">Add</button>';
-				html += '</li>';
+				html  += `<li> <button class="addSearchResultToInvoice" data-code="${result.code}">Add</button> `;
+				html  += `${result.name} - ${result.description}`;
+				html  += `</li>`;
 
 			});
 		} else {

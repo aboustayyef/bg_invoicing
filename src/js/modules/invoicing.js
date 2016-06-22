@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var h = require('./helpers.js');
 
 var init = function(){
 
@@ -25,11 +26,20 @@ bg.invoice = {
 		var html='';
 
 		if (bg.invoice.count > 0) {
+			html = '<ul>';
 			$.each(bg.invoice.items, function(i, item){
 				var stock_item = bg.goodsLookupById(item.code)
-				html += '<h3>' + stock_item.Code + ': ' + item.count + ' </h3>';
-				html += '<p>' + stock_item.Description + '</p>';
+				html += `<li>`;
+				html += `<h3><button class="removeItemFromInvoice" data-code="${stock_item.Code}">(&times;)</button> ${stock_item.Code} : ${item.count} </h3>`;
+				html += `<p>${stock_item.Description}</p>`;
+				html += `</li>`;
 			});
+			html += '</ul>';
+			
+			// totals
+			var total = 0;
+			total = bg.invoice.items.reduce(function(total, item){return total + (parseFloat(item.price.replace(/,/g, "") ) * item.count);},0);
+			html += `<h3>Total: ${h.formatPrice(total)}</h3>`;
 		} else {
 			html = "<h4>No Items in Invoice Yet</h4>";
 		}
@@ -46,7 +56,7 @@ bg.invoice = {
 
 		if (stock_item) {
 			bg.invoice.count += 1;
-			bg.invoice.items.push({code:code,count:1,total_price:0});
+			bg.invoice.items.push({code:code,count:1, price: stock_item["Price In"], total_price:0});
 			bg.updateInvoice();
 		}
 
@@ -68,11 +78,16 @@ bg.invoice = {
 		bg.updateInvoice();
 	};
 
-	// Listening to add button from search result list
+	// Listening to add & remove buttons from search result list
+
 	$(document).on('click', '.addSearchResultToInvoice', function(){
 		bg.addItemToInvoice($(this).data('code'));
-	})
+	});
 
+	$(document).on('click', '.removeItemFromInvoice', function(){
+		bg.removeItemFromInvoice($(this).data('code'));
+	});
+	
 
 }
 
