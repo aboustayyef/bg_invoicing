@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-var init = function(){
+var init = function(goodsRepository){
 
 	/*
 	*
@@ -10,36 +10,10 @@ var init = function(){
 
 	bg.executeSearch = function(){
 
-		var searchResults = {
-			count:0,
-			items:[]
-		};
 		var searchTerm = $('#search').val();
 
-		// loop through goods to find results
-
-		bg.goods.forEach(item => {
-			var itemName = item.Name.toString();
-			var itemDescription = item.Description.toString();
-			
-			// if result is found
-			if ((itemName.search(new RegExp(searchTerm,"i")) > -1) || (itemDescription.search(new RegExp(searchTerm,"i")) > -1) ) {
-
-				// update counter
-				searchResults.count  += 1 ;
-				
-				// push item to results
-				searchResults.items.push({
-					code:item.Code,
-					name: item.Name,
-					description: item.Description
-				});
-			}
-		});
-
-
-		bg.searchResults = searchResults;
-		bg.updateSearchResults();
+		let searchResults = goodsRepository.findByString(searchTerm);
+		bg.updateSearchResults(searchResults);
 	}
 
 
@@ -49,17 +23,18 @@ var init = function(){
 	*
 	* */
 
-	bg.updateSearchResults = function(){
+	bg.updateSearchResults = function(searchResults){
+		
 		// clear Search Results
 		$('#searchResults').empty();
 		var html = '';
 		
-		if (bg.searchResults.count > 0) {
-			$.each(bg.searchResults.items, function(i, result){
+		if (searchResults.count > 0) {
+			$.each(searchResults.items, function(i, result){
 				html  += `
 					<li> 
-						<button class="addSearchResultToInvoice" data-code="${result.code}">Add</button> 
-						${result.name} - ${result.description}
+						<button class="addSearchResultToInvoice" data-code="${result.Code}">Add</button> 
+						${result.Name} - ${result.Description}
 					</li>`;
 			});
 		} else {

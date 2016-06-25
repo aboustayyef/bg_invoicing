@@ -1,97 +1,110 @@
 var $ = require('jquery');
 var h = require('./helpers.js');
 
-var init = function(){
+var init = function(goodsRepository){
 
-bg.invoice = {
-	count:0,
-	items:[],
-	};
 /*
-
+	Class: InvoiceItem
+	Description: Each item inside (InvoiceList) is an (InvoiceItem)
+	Constructed From: simple object of stock item {}, fetched from goodsRepository
  */
-	bg.goodsLookupById = function(code){
-		var result = false;
-		$.each(bg.goods, function(i, item){
-			if (code == item.Code) {
-				result = item;
-			}
-		});
-		return result;
+
+	class InvoiceItem{
+
+		constructor(stockItem){
+			this.code= stockItem["Code"];
+			this.count = 1;
+			this.description = stockItem["Description"];
+			this.price = parseFloat(String(stockItem["Price In"]).replace(/,/,'')); // "9,000" => 9000
+			this.original_total_price = this.count * this.price;
+			this.total_price = this.original_total_price; //this can be overridden
+		}
+
+		addMore(qty = 1){
+			this.count += qty;
+			this.original_total_price = this.price * this.count;
+			this.total_price = this.original_total_price; // when an item is added, reset the overridden total price to original total price
+		}
+
+		overrideTotalPrice(amount){
+			this.total_price = amount;
+		}
+		
+		html(index){
+			return `
+			<li>
+				<h3>
+					<button class="removeItemFromInvoice" data-index="${index}">(&times;)</button> 
+					${this.code} : ${this.count} 
+				</h3>
+				<p>${this.description}</p>
+			</li>
+			`
+		}
 	}
 
-	// renders invoice based on bg.invoice
-	bg.updateInvoice=function(){
 
-		var html='';
+/*
+	Class: InvoiceList
+	Description: Holds the data and behavior of the list of (InvoiceItem)
+ */
 
-		if (bg.invoice.count > 0) {
-			html = '<ul>';
-			$.each(bg.invoice.items, function(i, item){
-				var stock_item = bg.goodsLookupById(item.code)
-				html += `
-				<li>
-					<h3>
-						<button class="removeItemFromInvoice" data-code="${stock_item.Code}">(&times;)</button> 
-						${stock_item.Code} : ${item.count} 
-					</h3>
-					<p>${stock_item.Description}</p>
-				</li>`;
+	class InvoiceList{
+		constructor(){
+			this.count = 0;
+			this.invoiceItems =[];
+		}
+		getItem(index){
+			return this.invoiceItems[index];
+		}
+		addItem(item){
+			this.count += 1;
+			this.invoiceItems.push(item)
+		}
+		removeItem(index){
+			this.invoiceItems.splice(index,1);
+		}
+		html(){
+			let html = `<ul>`;
+			let total = 0;
+			this.invoiceItems.forEach(function(invoiceItem, index){
+				total += invoiceItem.total_price * invoiceItem.count;
+				html += invoiceItem.html(index);
 			});
-			html += '</ul>';
-			
-			// totals
-			var total = 0;
-			total = bg.invoice.items.reduce(function(total, item){return total + (parseFloat(item.price.replace(/,/g, "") ) * item.count);},0);
+			html += `</ul>`;
 			html += `<h3>Total: ${h.formatPrice(total)}</h3>`;
-		} else {
-			html = "<h4>No Items in Invoice Yet</h4>";
+			return html;
 		}
+	}
 
-		$('#output').html(html);
 
-	};
+/*
 
-	// add item with id to bg.invoice
-	bg.addItemToInvoice = function(code){
+	Initialization and behavior code Starts Here
 
-		// todo: check if item already is on the list
-		var stock_item = bg.goodsLookupById(code);
+ */
 
-		if (stock_item) {
-			bg.invoice.count += 1;
-			bg.invoice.items.push({code:code,count:1, price: stock_item["Price In"], total_price:0});
-			bg.updateInvoice();
-		}
 
-	};
+bg.invoiceList = new InvoiceList;
 
-	// remove item from bg.invoice
-	bg.removeItemFromInvoice = function(code){
+// renders invoice based on bg.invoiceList
+bg.updateInvoice=function(){
+	$('#output').html(bg.invoiceList.html());
+};
 
-		var new_invoice = {count:0,items:[]};
-		
-		$.each(bg.invoice.items, function(i, item){
-			if (item.code != code) {
-				new_invoice.count += 1;
-				new_invoice.items.push(item);
-			}
-		});
-		
-		bg.invoice = new_invoice;
-		bg.updateInvoice();
-	};
+// Listening to add & remove buttons from search result list
 
-	// Listening to add & remove buttons from search result list
+$(document).on('click', '.addSearchResultToInvoice', function(){
+	let stockItem = goodsRepository.findByCode($(this).data('code'));
+	let invoiceItem = new InvoiceItem(stockItem);
+	bg.invoiceList.addItem(invoiceItem);
+	bg.updateInvoice();
+});
 
-	$(document).on('click', '.addSearchResultToInvoice', function(){
-		bg.addItemToInvoice($(this).data('code'));
-	});
-
-	$(document).on('click', '.removeItemFromInvoice', function(){
-		bg.removeItemFromInvoice($(this).data('code'));
-	});
-	
+$(document).on('click', '.removeItemFromInvoice', function(){
+	bg.invoiceList.removeItem($(this).data('index'));
+	bg.updateInvoice();
+});
 
 }
 
