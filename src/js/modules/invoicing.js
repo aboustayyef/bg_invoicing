@@ -29,10 +29,14 @@ bg.invoice = {
 			html = '<ul>';
 			$.each(bg.invoice.items, function(i, item){
 				var stock_item = bg.goodsLookupById(item.code)
-				html += `<li>`;
-				html += `<h3><button class="removeItemFromInvoice" data-code="${stock_item.Code}">(&times;)</button> ${stock_item.Code} : ${item.count} </h3>`;
-				html += `<p>${stock_item.Description}</p>`;
-				html += `</li>`;
+				html += `
+				<li>
+					<h3>
+						<button class="removeItemFromInvoice" data-code="${stock_item.Code}">(&times;)</button> 
+						${stock_item.Code} : ${item.count} 
+					</h3>
+					<p>${stock_item.Description}</p>
+				</li>`;
 			});
 			html += '</ul>';
 			

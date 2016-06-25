@@ -17,8 +17,8 @@ var init = function(){
 		var searchTerm = $('#search').val();
 
 		// loop through goods to find results
-		$.each(bg.goods, function(i, item){
 
+		bg.goods.forEach(item => {
 			var itemName = item.Name.toString();
 			var itemDescription = item.Description.toString();
 			
@@ -35,8 +35,8 @@ var init = function(){
 					description: item.Description
 				});
 			}
-
 		});
+
 
 		bg.searchResults = searchResults;
 		bg.updateSearchResults();
@@ -56,10 +56,11 @@ var init = function(){
 		
 		if (bg.searchResults.count > 0) {
 			$.each(bg.searchResults.items, function(i, result){
-				html  += `<li> <button class="addSearchResultToInvoice" data-code="${result.code}">Add</button> `;
-				html  += `${result.name} - ${result.description}`;
-				html  += `</li>`;
-
+				html  += `
+					<li> 
+						<button class="addSearchResultToInvoice" data-code="${result.code}">Add</button> 
+						${result.name} - ${result.description}
+					</li>`;
 			});
 		} else {
 			html = '<h4>No items</h4>';
