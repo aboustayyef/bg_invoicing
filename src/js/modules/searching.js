@@ -2,6 +2,50 @@ var $ = require('jquery');
 
 var init = function(goodsRepository){
 
+	class SearchResultsItem{
+		
+		constructor(stockItem){
+			this.item = stockItem;
+		}
+
+		html(){
+			let html = `
+				<li> 
+					<button class="addSearchResultToInvoice" data-code="${this.item.Code}">Add</button> 
+					${this.item.Name} - ${this.item.Description}
+				</li>`;
+			return html;
+		}
+	}
+
+
+	class SearchResultsList{
+		
+		constructor(searchResults){ // array
+			this.items = searchResults;
+		}
+		
+		html(){
+			let html;
+
+			if (this.items.length > 0) {
+
+				html = `<ul>`;
+
+				this.items.forEach(function(item){
+					let Item = new SearchResultsItem(item);
+					html += Item.html();
+				});
+
+				html += `</ul>`;
+
+			} else {
+				html = `<h4>No results</h4>`;
+			}
+			return html;
+		}
+	}
+
 	/*
 	*
 	*	Performs the searching in database using the item in the search box
@@ -12,36 +56,16 @@ var init = function(goodsRepository){
 
 		var searchTerm = $('#search').val();
 
-		let searchResults = goodsRepository.findByString(searchTerm);
-		bg.updateSearchResults(searchResults);
-	}
+		let searchResults, list;
+			
+			if (searchTerm.length == 0) {
+				list = new SearchResultsList([]);
+			} else {
+				searchResults = goodsRepository.findByString(searchTerm);
+				list = new SearchResultsList(searchResults.items);
+			}
 
-
-	/*
-	*
-	*	Displays the content of bg.searchResults to choose from
-	*
-	* */
-
-	bg.updateSearchResults = function(searchResults){
-		
-		// clear Search Results
-		$('#searchResults').empty();
-		var html = '';
-		
-		if (searchResults.count > 0) {
-			$.each(searchResults.items, function(i, result){
-				html  += `
-					<li> 
-						<button class="addSearchResultToInvoice" data-code="${result.Code}">Add</button> 
-						${result.Name} - ${result.Description}
-					</li>`;
-			});
-		} else {
-			html = '<h4>No items</h4>';
-		}
-		
-		$('#searchResults').html(html);
+		$('#searchResults').html(list.html());
 	}
 
 	/*
@@ -64,8 +88,8 @@ var init = function(goodsRepository){
 
 	    // <Esc>
 	    if (e.keyCode == 27 ){
-	    	bg.searchResults.count = 0;
-	    	bg.updateSearchResults();
+	    	$('#search').val('');
+	    	bg.executeSearch();
 	    }
 	});
 }
