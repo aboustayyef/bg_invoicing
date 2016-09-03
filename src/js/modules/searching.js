@@ -75,6 +75,13 @@ var init = function(goodsRepository){
 	// When clicking on the search button
 	$('#submit').on('click', bg.executeSearch);
 
+	// When clicking on the clear button
+	var clearButton = document.getElementById('clearSearch');
+	clearButton.addEventListener('click', function(){
+		document.getElementById('search').value ='';
+		bg.executeSearch();
+	});
+
 	// When using keyboard
 	$('#search').keyup(function (e) {
 	    
