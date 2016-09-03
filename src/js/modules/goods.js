@@ -27,15 +27,20 @@ export default class GoodsRepository{
 
 		this.items.forEach(item => {
 		
-			let itemName = item.Name.toString();
-		
+			let itemName = item.Name.toString();	
 			let itemDescription = item.Description.toString();
-			
+			let itemCode = item.Code.toString();
+			let itemBrand = item.Brand.toString();
+
 			let positiveResults = 0;
 
 			// perform case insensitive search for each search string and add up positives
 			searchStrings.forEach(function(searchString){
-				if ((itemName.search(new RegExp(searchString,"i")) > -1) || (itemDescription.search(new RegExp(searchString,"i")) > -1) ){
+				if ( (itemName.search(new RegExp(searchString,"i")) > -1) || 
+					 (itemDescription.search(new RegExp(searchString,"i")) > -1) || 
+					 (itemCode.search(new RegExp(searchString,"i")) > -1) ||
+					 (itemBrand.search(new RegExp(searchString,"i")) > -1)
+					 ){
 					positiveResults += 1;
 				}	
 			})

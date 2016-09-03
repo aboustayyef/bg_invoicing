@@ -52,7 +52,7 @@ var init = function(goodsRepository){
 
 	bg.executeSearch = function(){
 
-		var searchTerm = $('#search').val();
+		var searchTerm = document.getElementById('search').value;
 
 		let searchResults, list;
 			

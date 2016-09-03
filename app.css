@@ -74,7 +74,8 @@ button.addSearchResultToInvoice {
 header#invoiceHeader {
     display: flex;
     justify-content: space-between;
-    width: 90%;
+    width: 100%;
+    margin-top: 50px;
 }
 
 section#output {
@@ -85,17 +86,17 @@ section#output {
 table#invoiceTable {
     border-collapse: collapse;
     text-align: left;
-    font-size: 0.9em;
+    font-size: 0.75em;
     width: 100%;
-    margin-top: 30px;
+    margin-top: 70px;
 }
 
 td {
-    padding: 10px 15px;
+    padding: 10px 5px;
 }
 
 th {
-    padding: 3px 15px;
+    padding: 3px 5px;
 }
 
 tr {
@@ -109,6 +110,8 @@ body {}
 }
 #invoiceHeader h1{
     margin-bottom:3px;
+    color: #888;
+    margin-top: 0;
 }
 
 #invoiceHeader h3 {

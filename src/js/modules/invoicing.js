@@ -14,7 +14,10 @@ var init = function(goodsRepository){
 		constructor(stockItem){
 			this.code= stockItem["Code"];
 			this.count = 1;
+			this.stock = stockItem["Stock"];
 			this.description = stockItem["Description"];
+			this.brand = stockItem["Brand"];
+			this.name = stockItem["Name"];
 			this.price = parseFloat(String(stockItem["Price In"]).replace(/,/,'')); // "9,000" => 9000
 			this.original_total_price = this.count * this.price;
 			this.total_price = this.original_total_price; //this can be overridden
@@ -33,8 +36,10 @@ var init = function(goodsRepository){
 		html(index){
 			return `
 			<tr>
-				<td><button class="removeItemFromInvoice hideFromPrint" data-index="${index}">(&times;)</button> </td>
-				<td>${this.description}</td>
+				<td class="hideFromPrint"><button class="removeItemFromInvoice hideFromPrint" data-index="${index}">(&times;)</button> </td>
+				<td>${this.code}</td>
+				<td>${this.brand}</td>
+				<td>${this.name}<br>${this.description}</td>
 				<td>${h.formatPrice(this.price)}</td>
 				<td>${this.count}</td>
 				<td>${h.formatPrice(this.total_price)}</td>
@@ -63,12 +68,18 @@ var init = function(goodsRepository){
 		addItem(item){ // item is an instance of InvoiceItem
 
 			let itemIsAlreadyListed = false;
+			let itemHasStock = true;
 
 			// loop through existing list
 				this.invoiceItems.forEach(function(invoiceItem,index){
-					// if item exist, increase qty
+					// if item exist
 					if (item.code == invoiceItem.code) {
-						invoiceItem.addMore(1);
+						// if we haven't exceeded stock, add quantity
+						if (invoiceItem.count < item.stock) {
+							invoiceItem.addMore(1);
+						} else {
+							itemHasStock = false;
+						}
 						itemIsAlreadyListed = true;
 					}
 				})
@@ -78,8 +89,10 @@ var init = function(goodsRepository){
 				this.invoiceItems.push(item)
 			}
 			
-			// in both cases add price to total
-			this.total += item.price;
+			// in both cases add price to total (unless we are trying to add more than stock)
+			if (itemHasStock) {
+				this.total += item.price;
+			}
 
 		}
 		removeItem(index){
@@ -90,14 +103,13 @@ var init = function(goodsRepository){
 			let html = `
 					<header id="invoiceHeader">
 						<div id="leftHeader">
-							<h1>Blue Gallery Home and Office</h1>
-							<p>Aflao Road, Opposite Shell Station. Tema, Ghana.</p>
+							<h1>QUOTE</h1>
+							<p>${this.date}</p>
 							<h3>${this.customer}</h3>
-							<p>Address: ${this.customerAddress}</p>
+							<p>${this.customerAddress}</p>
 						</div>
 						<div id="rightHeader">
-							<h3>Date: ${this.date}</h2>
-							<h4>PROFORMA INVOICE</h4>
+							<img src="/img/logo.svg">
 						</div>
 					</header>
 			`;
@@ -105,11 +117,17 @@ var init = function(goodsRepository){
 			html += `<table id="invoiceTable">
 						<thead>
 							<tr>
-								<th>
+								<th class="hideFromPrint">
 									&nbsp;
+								</th>
+								<th>
+									Code
+								</th>
+								<th>
+									Brand
 								</th>								
 								<th>
-									Description
+									Name
 								</th>
 								<th>
 									Price
@@ -128,7 +146,7 @@ var init = function(goodsRepository){
 			});
 			html += `
 				<tr>
-					<th>
+					<th class="hideFromPrint">
 						&nbsp;
 					</th>								
 					<th>
@@ -138,7 +156,13 @@ var init = function(goodsRepository){
 						&nbsp;
 					</th>
 					<th>
+						&nbsp;
+					</th>
+					<th>
 						<h3>Total:</h3>
+					</th>
+					<th>
+						&nbsp;
 					</th>
 					<th>
 						<h3>${h.formatPrice(this.total)}</h3>
