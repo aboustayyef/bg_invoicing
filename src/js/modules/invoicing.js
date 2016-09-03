@@ -32,13 +32,13 @@ var init = function(goodsRepository){
 		
 		html(index){
 			return `
-			<li>
-				<h3>
-					<button class="removeItemFromInvoice" data-index="${index}">(&times;)</button> 
-					${this.code} : ${this.count} 
-				</h3>
-				<p>${this.description}</p>
-			</li>
+			<tr>
+				<td><button class="removeItemFromInvoice hideFromPrint" data-index="${index}">(&times;)</button> </td>
+				<td>${this.description}</td>
+				<td>${h.formatPrice(this.price)}</td>
+				<td>${this.count}</td>
+				<td>${h.formatPrice(this.total_price)}</td>
+			</tr>
 			`
 		}
 	}
@@ -51,28 +51,105 @@ var init = function(goodsRepository){
 
 	class InvoiceList{
 		constructor(){
-			this.count = 0;
+			this.total = 0;
 			this.invoiceItems =[];
+			this.customer = '';
+			this.customerAddress ='';
+			this.date = h.niceDate();
 		}
 		getItem(index){
 			return this.invoiceItems[index];
 		}
-		addItem(item){
-			this.count += 1;
-			this.invoiceItems.push(item)
+		addItem(item){ // item is an instance of InvoiceItem
+
+			let itemIsAlreadyListed = false;
+
+			// loop through existing list
+				this.invoiceItems.forEach(function(invoiceItem,index){
+					// if item exist, increase qty
+					if (item.code == invoiceItem.code) {
+						invoiceItem.addMore(1);
+						itemIsAlreadyListed = true;
+					}
+				})
+
+			// if item doesnt exist, push it to list
+			if (!itemIsAlreadyListed) {
+				this.invoiceItems.push(item)
+			}
+			
+			// in both cases add price to total
+			this.total += item.price;
+
 		}
 		removeItem(index){
+			this.total -= this.invoiceItems[index].total_price;
 			this.invoiceItems.splice(index,1);
 		}
 		html(){
-			let html = `<ul>`;
-			let total = 0;
+			let html = `
+					<header id="invoiceHeader">
+						<div id="leftHeader">
+							<h1>Blue Gallery Home and Office</h1>
+							<p>Aflao Road, Opposite Shell Station. Tema, Ghana.</p>
+							<h3>${this.customer}</h3>
+							<p>Address: ${this.customerAddress}</p>
+						</div>
+						<div id="rightHeader">
+							<h3>Date: ${this.date}</h2>
+							<h4>PROFORMA INVOICE</h4>
+						</div>
+					</header>
+			`;
+			html += `<main>`;
+			html += `<table id="invoiceTable">
+						<thead>
+							<tr>
+								<th>
+									&nbsp;
+								</th>								
+								<th>
+									Description
+								</th>
+								<th>
+									Price
+								</th>
+								<th>
+									Qty
+								</th>
+								<th>
+									Total
+								</th>
+							</tr>
+						</thead>
+			`;
 			this.invoiceItems.forEach(function(invoiceItem, index){
-				total += invoiceItem.total_price * invoiceItem.count;
 				html += invoiceItem.html(index);
 			});
-			html += `</ul>`;
-			html += `<h3>Total: ${h.formatPrice(total)}</h3>`;
+			html += `
+				<tr>
+					<th>
+						&nbsp;
+					</th>								
+					<th>
+						&nbsp;
+					</th>
+					<th>
+						&nbsp;
+					</th>
+					<th>
+						<h3>Total:</h3>
+					</th>
+					<th>
+						<h3>${h.formatPrice(this.total)}</h3>
+					</th>
+				</tr>
+			`;
+			html += `</table>`;
+			html += `</main>`;
+			html += `<footer>
+			<p>This Invoice is only applicable for one week after issuance</p>
+			</footer>`
 			return html;
 		}
 	}
@@ -94,6 +171,10 @@ bg.updateInvoice=function(){
 
 // Listening to add & remove buttons from search result list
 
+$(document).ready(function(){
+	bg.updateInvoice();
+})
+
 $(document).on('click', '.addSearchResultToInvoice', function(){
 	let stockItem = goodsRepository.findByCode($(this).data('code'));
 	let invoiceItem = new InvoiceItem(stockItem);
@@ -105,6 +186,16 @@ $(document).on('click', '.removeItemFromInvoice', function(){
 	bg.invoiceList.removeItem($(this).data('index'));
 	bg.updateInvoice();
 });
+
+document.getElementById('customerName').addEventListener('input', function(){
+	bg.invoiceList.customer = document.getElementById('customerName').value;
+	bg.updateInvoice();
+})
+
+document.getElementById('customerAddress').addEventListener('input', function(){
+	bg.invoiceList.customerAddress = document.getElementById('customerAddress').value;
+	bg.updateInvoice();
+})
 
 }
 

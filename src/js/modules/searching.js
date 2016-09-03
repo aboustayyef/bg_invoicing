@@ -10,9 +10,9 @@ var init = function(goodsRepository){
 
 		html(){
 			let html = `
-				<li> 
+				<li class="search_item"> 
 					<button class="addSearchResultToInvoice" data-code="${this.item.Code}">Add</button> 
-					${this.item.Name} - ${this.item.Description}
+					<div class="description">${this.item.Name} - ${this.item.Description}</div>
 				</li>`;
 			return html;
 		}
@@ -30,14 +30,12 @@ var init = function(goodsRepository){
 
 			if (this.items.length > 0) {
 
-				html = `<ul>`;
+				html = ``;
 
 				this.items.forEach(function(item){
 					let Item = new SearchResultsItem(item);
 					html += Item.html();
 				});
-
-				html += `</ul>`;
 
 			} else {
 				html = `<h4>No results</h4>`;
@@ -65,7 +63,7 @@ var init = function(goodsRepository){
 				list = new SearchResultsList(searchResults.items);
 			}
 
-		$('#searchResults').html(list.html());
+		$('#search_results').html(list.html());
 	}
 
 	/*

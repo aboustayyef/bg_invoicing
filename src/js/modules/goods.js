@@ -1,6 +1,6 @@
 import items from './goods_data.js';
 
-export default class Goods{
+export default class GoodsRepository{
 	
 	constructor(){
 		this.items = items();
