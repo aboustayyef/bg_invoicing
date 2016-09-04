@@ -11,7 +11,6 @@ var init = function(goodsRepository){
 
 	class InvoiceItem{
 		constructor(stockItem){
-			const vatRate = 0.175;
 			this.code= stockItem["Code"];
 			this.count = 1;
 			this.stock = stockItem["Stock"];
@@ -20,7 +19,6 @@ var init = function(goodsRepository){
 			this.name = stockItem["Name"];
 			this.priceEx = h.castToNumber(stockItem["Price Ex"]); // "9,000" => 9000
 			this.priceIn = h.castToNumber(stockItem["Price In"]);
-			this.vat = this.priceEx * vatRate;
 			this.totalIn = this.priceIn * this.count;
 			this.totalEx = this.priceEx * this.count;
 		}
@@ -60,7 +58,6 @@ var init = function(goodsRepository){
 		constructor(){
 			this.totalIn = 0.00;
 			this.totalEx = 0.00;
-			this.totalVat = 0.00;
 			this.invoiceItems =[];
 			this.preparedBy = '';
 			this.customer = '';
@@ -98,12 +95,12 @@ var init = function(goodsRepository){
 			if (itemHasStock) {
 				this.totalIn += item.priceIn;
 				this.totalEx += item.priceEx;
-				this.totalVat += item.vat;
 			}
 
 		}
 		removeItem(index){
-			this.total -= this.invoiceItems[index].total_price;
+			this.totalEx -= this.invoiceItems[index].totalEx;
+			this.totalIn -= this.invoiceItems[index].totalIn;
 			this.invoiceItems.splice(index,1);
 		}
 		html(){
@@ -167,7 +164,7 @@ var init = function(goodsRepository){
 						<span class="totalHeading">Subtotal:</span> ${h.formatPrice(this.totalEx)}
 					</div>
 					<div id="vat" class="alignRight">
-						<span class="totalHeading">VAT (17.5%):</span> ${h.formatPrice(this.totalVat)}
+						<span class="totalHeading">VAT (17.5%):</span> ${h.formatPrice(this.totalIn - this.totalEx)}
 					</div>
 					<div id="total" class="alignRight">
 						<span class="totalHeading">Total:</span> ${h.formatPrice(this.totalIn)}
