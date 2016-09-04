@@ -1,7 +1,10 @@
 module.exports = {
 	formatPrice :  function(cedis) {
 		var pesewas = cedis * 100;
-		return '¢ ' + ( (pesewas / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") );
+		return 'GH¢ ' + ( (pesewas / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") );
+	},
+	castToNumber: function(s){
+		return parseFloat(String(s).replace(/,/,'')); // "9,000" => 9000
 	},
 	niceDate: function(){
 		var today = new Date();

@@ -10,39 +10,41 @@ var init = function(goodsRepository){
  */
 
 	class InvoiceItem{
-
 		constructor(stockItem){
+			const vatRate = 0.175;
 			this.code= stockItem["Code"];
 			this.count = 1;
 			this.stock = stockItem["Stock"];
 			this.description = stockItem["Description"];
 			this.brand = stockItem["Brand"];
 			this.name = stockItem["Name"];
-			this.price = parseFloat(String(stockItem["Price In"]).replace(/,/,'')); // "9,000" => 9000
-			this.original_total_price = this.count * this.price;
-			this.total_price = this.original_total_price; //this can be overridden
+			this.priceEx = h.castToNumber(stockItem["Price Ex"]); // "9,000" => 9000
+			this.priceIn = h.castToNumber(stockItem["Price In"]);
+			this.vat = this.priceEx * vatRate;
+			this.totalIn = this.priceIn * this.count;
+			this.totalEx = this.priceEx * this.count;
 		}
 
 		addMore(qty = 1){
 			this.count += qty;
-			this.original_total_price = this.price * this.count;
-			this.total_price = this.original_total_price; // when an item is added, reset the overridden total price to original total price
+			this.totalIn = this.priceIn * this.count;
+			this.totalEx = this.priceEx * this.count;
 		}
 
 		overrideTotalPrice(amount){
-			this.total_price = amount;
+			// this.total_price = amount;
 		}
 		
 		html(index){
 			return `
 			<tr>
-				<td class="hideFromPrint"><button class="removeItemFromInvoice hideFromPrint" data-index="${index}">(&times;)</button> </td>
+				<td class="hideFromPrint"><button class="removeItemFromInvoice hideFromPrint" data-index="${index}">&times;</button> </td>
 				<td>${this.code}</td>
 				<td>${this.brand}</td>
 				<td>${this.name}<br>${this.description}</td>
-				<td>${h.formatPrice(this.price)}</td>
+				<td>${h.formatPrice(this.priceEx)}</td>
 				<td>${this.count}</td>
-				<td>${h.formatPrice(this.total_price)}</td>
+				<td>${h.formatPrice(this.totalEx)}</td>
 			</tr>
 			`
 		}
@@ -56,8 +58,11 @@ var init = function(goodsRepository){
 
 	class InvoiceList{
 		constructor(){
-			this.total = 0;
+			this.totalIn = 0.00;
+			this.totalEx = 0.00;
+			this.totalVat = 0.00;
 			this.invoiceItems =[];
+			this.preparedBy = '';
 			this.customer = '';
 			this.customerAddress ='';
 			this.date = h.niceDate();
@@ -91,7 +96,9 @@ var init = function(goodsRepository){
 			
 			// in both cases add price to total (unless we are trying to add more than stock)
 			if (itemHasStock) {
-				this.total += item.price;
+				this.totalIn += item.priceIn;
+				this.totalEx += item.priceEx;
+				this.totalVat += item.vat;
 			}
 
 		}
@@ -101,11 +108,12 @@ var init = function(goodsRepository){
 		}
 		html(){
 			let html = `
+					<div class = "topPart">
 					<header id="invoiceHeader">
 						<div id="leftHeader">
 							<h1>QUOTE</h1>
 							<p>${this.date}</p>
-							<h3>${this.customer}</h3>
+							<h3>To: ${this.customer}</h3>
 							<p>${this.customerAddress}</p>
 						</div>
 						<div id="rightHeader">
@@ -144,35 +152,40 @@ var init = function(goodsRepository){
 			this.invoiceItems.forEach(function(invoiceItem, index){
 				html += invoiceItem.html(index);
 			});
-			html += `
-				<tr>
-					<th class="hideFromPrint">
-						&nbsp;
-					</th>								
-					<th>
-						&nbsp;
-					</th>
-					<th>
-						&nbsp;
-					</th>
-					<th>
-						&nbsp;
-					</th>
-					<th>
-						<h3>Total:</h3>
-					</th>
-					<th>
-						&nbsp;
-					</th>
-					<th>
-						<h3>${h.formatPrice(this.total)}</h3>
-					</th>
-				</tr>
-			`;
 			html += `</table>`;
 			html += `</main>`;
+			html += `</div>`; // top part
 			html += `<footer>
-			<p>This Invoice is only applicable for one week after issuance</p>
+			<div id="invoiceFooter">
+				<div class="leftSide">
+					<h5>Prepared by: ${this.preparedBy}</h5>
+					<h4>Blue Gallery Home and Office</h4>
+					<h5>+233 303 300 121<br>bluegallery.com.gh</h5>
+				</div>
+				<div class="rightSide">
+					<div id="subtotal" class="alignRight">
+						<span class="totalHeading">Subtotal:</span> ${h.formatPrice(this.totalEx)}
+					</div>
+					<div id="vat" class="alignRight">
+						<span class="totalHeading">VAT (17.5%):</span> ${h.formatPrice(this.totalVat)}
+					</div>
+					<div id="total" class="alignRight">
+						<span class="totalHeading">Total:</span> ${h.formatPrice(this.totalIn)}
+					</div>
+				</div>
+			</div>
+			<div id="footerMeta">
+				<p>
+					1st Branch: TEMA, Motorway Roundabout, Aflao road, opposite Shell<br>
+					2nd Branch: ACCRA, Maxmart 37 Mall, first floor
+				</p>
+				<p>
+					Cheques are payable to TARZAN ENTERPRISE LIMITED<br>
+					VAT registration number: C0003222233<br>
+					Quotation is valid for five days from date of record.<br>
+					Items sold & delivered in good shape are not returnable
+				</p>
+			</div>
 			</footer>`
 			return html;
 		}
@@ -210,6 +223,11 @@ $(document).on('click', '.removeItemFromInvoice', function(){
 	bg.invoiceList.removeItem($(this).data('index'));
 	bg.updateInvoice();
 });
+
+document.getElementById('preparedBy').addEventListener('input', function(){
+	bg.invoiceList.preparedBy = document.getElementById('preparedBy').value;
+	bg.updateInvoice();
+})
 
 document.getElementById('customerName').addEventListener('input', function(){
 	bg.invoiceList.customer = document.getElementById('customerName').value;
