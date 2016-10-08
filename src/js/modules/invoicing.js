@@ -172,16 +172,15 @@ var init = function(goodsRepository){
 				</div>
 			</div>
 			<div id="footerMeta">
+				<p>PAYMENT CONDITIONS</p>
 				<p>
-					1st Branch: TEMA, Motorway Roundabout, Aflao road, opposite Shell<br>
-					2nd Branch: ACCRA, Maxmart 37 Mall, first floor
+					Cheques are payable to: TARZAN ENTERPRISE LTD.<br>
+					Bank transfer : Bank : CAL BANK LTD. | Account name: Tarzan Enterprise Ltd. | Account number: 061018379022 | Branch sort
+code: 140102 | Swift code: ACCCGHAC | Account currency: Ghana Cedi
 				</p>
-				<p>
-					Cheques are payable to TARZAN ENTERPRISE LIMITED<br>
-					VAT registration number: C0003222233<br>
-					Quotation is valid for five days from date of record.<br>
-					Items sold & delivered in good shape are not returnable
-				</p>
+
+				<p>EXEMPTED FROM 3% WITHHOLDING TAX<br>TIN: C0003222233</p>
+				<p>Main showroom: TEMA, Aflao road, facing shell | Accra store: Maxmart 37 Mall, 1st floor</p>
 			</div>
 			</footer>`
 			return html;
