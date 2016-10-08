@@ -1,6 +1,6 @@
 <?php 
 if (isset($_POST['password'])) {
-	if ( md5($_POST['password']) != '3348a3fa582a00e9c44d09c9bce621cc') {
+	if ( md5($_POST['password']) != '737375516ab97588c7358524e9290a79') {
 		die('Wrong Password');
 	}
 } else {
