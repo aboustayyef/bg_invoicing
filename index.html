@@ -2,45 +2,47 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Blue Gallery Invoicing</title>
-	<link rel="stylesheet" type="text/css" href="app.css">
+	<title>Please Log in To Continue</title>
 </head>
 <body>
-<div class="wrapper">
-	<aside id="interface" class="hideFromPrint">
-		<table>
-			<tbody>
-				<tr>
-					<td><label for="preparedBy">Invoice Prepared by:</label></td>
-					<td><input type="text" name="preparedBy" id="preparedBy"></td>
-				</tr>
-				<tr>
-					<td><label for="customerName">Customer Name</label></td>
-					<td><input type="text" name="customerName" id="customerName"></td>
-				</tr>
-				<tr>
-					<td><label for="customerAddress">Customer Address</label></td>
-					<td><textarea name="customerAddress" id="customerAddress" rows="3" cols="20"></textarea></td>
-				</tr>
-			</tbody>
-		</table>
-		
-		<h3>Search For Item</h3>
-		<p>If too many results are found, make search more specific</p>
-		<input type="search" name="search" id="search"></input>
-		<button id="submit">Search</button>
-		<button id="clearSearch">Clear</button>
-		<ul id="search_results">
-			
-		</ul>
-	</aside>
-	
-	<section id="output">
-		<p>This is where the results will be displayed</p>		
-	</section>
-</div>
+	<style>
+		*{margin:0; padding:0;font-family:sans-serif;}
+		body,html{min-height: 100%;height:100%;}
+		body{
+			display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    background:#ededed;
+		}
+		h1{
+			margin: 45px 0;
+		}
+		#middle{
+			padding:50px;
+			background: white;
+			border:5px solid #333;
+			border-radius:15px;
+		}
+		#interface{
+			padding-top: 10px;
+		}
+		#password {
+			padding:2px;
+			margin:0 10px;
+		}
+	</style>	
+	<div id="middle">
+
+		<h1>Please Enter Password to access this page</h1>
+		<form method="POST" action="/secure.php">
+			<div id="interface">			
+				<label for="password">Enter Password:</label>
+				<input type="password" name="password" id="password">
+				<input type="submit" name="submit">
+			</div>
+		</form>
+	</div>
+
 
 </body>
-
-<script src="build/js/bundle.js"></script>
 </html>
