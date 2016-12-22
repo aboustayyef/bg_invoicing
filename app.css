@@ -87,6 +87,9 @@ section#output {
     justify-content: space-between;
 }
 
+table#invoiceTable {
+    margin-top: 70px;
+}
 
 
 body {}

@@ -108,9 +108,9 @@ var init = function(goodsRepository){
 					<div class = "topPart">
 					<header id="invoiceHeader">
 						<div id="leftHeader">
-							<h1>QUOTE</h1>
-							<p>${this.date}</p>
-							<h3>To: ${this.customer}</h3>
+							<h1 class="title is-3">QUOTE</h1>
+							<p class="subtitle is-5">${this.date}</p>
+							<h3><strong>To: ${this.customer}</strong></h3>
 							<p>${this.customerAddress}</p>
 						</div>
 						<div id="rightHeader">
