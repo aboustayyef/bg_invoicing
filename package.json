@@ -9,6 +9,8 @@
   "author": "Mustapha Hamoui",
   "license": "ISC",
   "dependencies": {
+    "bulma": "^0.2.3",
+    "gulp-sass": "^3.0.0",
     "jquery": "^3.0.0"
   },
   "devDependencies": {

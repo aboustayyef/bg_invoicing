@@ -36,13 +36,13 @@ var init = function(goodsRepository){
 		html(index){
 			return `
 			<tr>
-				<td class="hideFromPrint"><button class="removeItemFromInvoice hideFromPrint" data-index="${index}">&times;</button> </td>
 				<td>${this.code}</td>
 				<td>${this.brand}</td>
 				<td>${this.name}<br>${this.description}</td>
 				<td>${h.formatPrice(this.priceEx)}</td>
 				<td>${this.count}</td>
 				<td>${h.formatPrice(this.totalEx)}</td>
+				<td class="hideFromPrint"><button class="removeItemFromInvoice hideFromPrint button is-danger" data-index="${index}">Remove</button> </td>
 			</tr>
 			`
 		}
@@ -119,12 +119,9 @@ var init = function(goodsRepository){
 					</header>
 			`;
 			html += `<main>`;
-			html += `<table id="invoiceTable">
+			html += `<table id="invoiceTable" class="table">
 						<thead>
 							<tr>
-								<th class="hideFromPrint">
-									&nbsp;
-								</th>
 								<th>
 									Code
 								</th>
@@ -142,6 +139,9 @@ var init = function(goodsRepository){
 								</th>
 								<th>
 									Total
+								</th>
+								<th class="hideFromPrint">
+									&nbsp;
 								</th>
 							</tr>
 						</thead>

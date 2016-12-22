@@ -11,7 +11,7 @@ var init = function(goodsRepository){
 		html(){
 			let html = `
 				<li class="search_item"> 
-					<button class="addSearchResultToInvoice" data-code="${this.item.Code}">Add</button> 
+					<button class="addSearchResultToInvoice button" data-code="${this.item.Code}">Add</button> 
 					<div class="description">${this.item.Name} - ${this.item.Description}</div>
 				</li>`;
 			return html;
@@ -72,31 +72,27 @@ var init = function(goodsRepository){
 	*
 	* */
 
-	// When clicking on the search button
-	$('#submit').on('click', bg.executeSearch);
-
-	// When clicking on the clear button
-	var clearButton = document.getElementById('clearSearch');
-	clearButton.addEventListener('click', function(){
-		document.getElementById('search').value ='';
-		bg.executeSearch();
-	});
 
 	// When using keyboard
 	$('#search').keyup(function (e) {
-	    
-		// <Return> Key
 
-	    if (e.keyCode == 13) {
-	        bg.executeSearch();
-	    }
 
 	    // <Esc>
 	    if (e.keyCode == 27 ){
 	    	$('#search').val('');
 	    	bg.executeSearch();
 	    }
+
+	    // Any other Key (starts executing after 3 letter)
+	    if ($('#search').val().length > 0){
+	    	bg.executeSearch();
+	    } else {
+	    	$('#search').val('');
+	    	bg.executeSearch();
+	    }
 	});
+
+
 }
 
 module.exports = {

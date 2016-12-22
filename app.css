@@ -87,25 +87,7 @@ section#output {
     justify-content: space-between;
 }
 
-table#invoiceTable {
-    border-collapse: collapse;
-    text-align: left;
-    font-size: 0.75em;
-    width: 100%;
-    margin-top: 70px;
-}
 
-td {
-    padding: 10px 5px;
-}
-
-th {
-    padding: 3px 5px;
-}
-
-tr {
-    border-top: 1px solid darkgrey;
-}
 
 body {}
 

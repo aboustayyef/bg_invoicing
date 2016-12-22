@@ -14,32 +14,33 @@ if (isset($_POST['password'])) {
 	<meta charset="UTF-8">
 	<title>Blue Gallery Invoicing</title>
 	<link rel="stylesheet" type="text/css" href="app.css">
+	<link rel="stylesheet" type="text/css" href="/build/css/app.css">
 </head>
 <body>
 <div class="wrapper">
 	<aside id="interface" class="hideFromPrint">
-		<table>
-			<tbody>
-				<tr>
-					<td><label for="preparedBy">Invoice Prepared by:</label></td>
-					<td><input type="text" name="preparedBy" id="preparedBy"></td>
-				</tr>
-				<tr>
-					<td><label for="customerName">Customer Name</label></td>
-					<td><input type="text" name="customerName" id="customerName"></td>
-				</tr>
-				<tr>
-					<td><label for="customerAddress">Customer Address</label></td>
-					<td><textarea name="customerAddress" id="customerAddress" rows="3" cols="20"></textarea></td>
-				</tr>
-			</tbody>
-		</table>
+
+
+		<label class="label">Invoice Prepared By</label>
+		<p class="control">
+		  <input id="preparedBy" name="preparedBy" class="input" type="text" >
+		</p>
+
+		<label class="label">Customer Name</label>
+		<p class="control">
+		  <input id="customerName" name="preparedBy" class="input" type="text" >
+		</p>
 		
-		<h3>Search For Item</h3>
-		<p>If too many results are found, make search more specific</p>
-		<input type="search" name="search" id="search"></input>
-		<button id="submit">Search</button>
-		<button id="clearSearch">Clear</button>
+		<label class="label">Customer Address</label>
+		<p class="control">
+		  <textarea name="customerAddress" id="customerAddress" class="textarea"></textarea>
+		</p>
+
+		<label class="label">Search For Items</label>
+		<p class="control">
+		  <input class="input" type="text" id="search" placeholder="Description or Code" autocomplete="off">
+		</p>
+
 		<ul id="search_results">
 			
 		</ul>
