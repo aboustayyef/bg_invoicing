@@ -53,5 +53,5 @@ if (isset($_POST['password'])) {
 
 </body>
 
-<script src="build/js/bundle.js"></script>
+<script src="build/js/bundle.js?v=1"></script>
 </html>
